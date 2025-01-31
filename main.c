@@ -14,6 +14,10 @@ int main() {
     scanf("%s", outputFileName);
 
     IO *io = IO_create(inputFileName, outputFileName);
+
+    IO_Dijkstra(io);
+    IO_sort_nodes(io);
+    IO_build_output_file(io);
     IO_destroy(io);
 
     return 0;

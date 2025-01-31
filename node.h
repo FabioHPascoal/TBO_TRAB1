@@ -19,7 +19,27 @@ void node_destroy(Node *node);
 int node_get_num(Node *node);
 
 /*
- * Retorna o array com a distância do nó 1 para o nó 2.
+ * asgasga
+ */
+float node_get_min_dist(Node *node);
+
+/*
+ * asgasga
+ */
+void node_set_min_dist(Node *node, float dist);
+
+/*
+ * asgasga
+ */
+Node *node_get_previous(Node *node);
+
+/*
+ * asgasga
+ */
+void node_set_previous(Node *node, Node *prev);
+
+/*
+ * Retorna a distância do nó 1 para o nó 2.
  */
 float node_get_distance(Node *node1, Node *node2);
 

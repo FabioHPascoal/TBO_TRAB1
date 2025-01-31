@@ -1,1 +1,1 @@
-caso_teste_pequeno_1.txt output.txt
+caso_teste_muito_pequeno_1.txt output.txt
