@@ -16,18 +16,6 @@ struct IO {
     char *outputFileName;
 };
 
-// int nodeCmp(void *node1, void *node2){
-//     Node *n1 = (Node *)node1;
-//     Node *n2 = (Node *)node2;
-
-//     if (node_get_min_dist(n1) > node_get_min_dist(n2)) return 1;
-//     if (node_get_min_dist(n1) < node_get_min_dist(n2)) return -1;
-//     if (node_get_num(n1) > node_get_num(n2)) return 1;
-//     if (node_get_num(n1) < node_get_num(n2)) return -1;
-
-//     return 0;
-// }
-
 IO *IO_create(char *inputFileName, char *outputFileName) {
 
     IO *io = malloc(sizeof(IO));
