@@ -6,11 +6,9 @@
 
 extern void sort(Item *a, int lo, int hi);
 
-const int MAX_BUFFER_SIZE = 1000000;
-
 struct IO {
-    unsigned int startNode;
-    unsigned int nodeCount;
+    int startNode;
+    int nodeCount;
     Node **nodes;
     char *inputFileName;
     char *outputFileName;
@@ -28,15 +26,19 @@ IO *IO_create(char *inputFileName, char *outputFileName) {
         exit(EXIT_FAILURE);
     }
 
-    char buffer[MAX_BUFFER_SIZE];
+    char *buffer = NULL;
+    size_t bufferSize = 0;
 
-    // Reading starting node
-    fgets(buffer, sizeof(buffer), file);
-    sscanf(buffer, "node_%d", &io->startNode);
-    
-    // Counting total number of nodes
+    if (getline(&buffer, &bufferSize, file) != -1) {
+        sscanf(buffer, "node_%d", &io->startNode);
+    } 
+    else {
+        printf("Failed to read the start node\n");
+        exit(EXIT_FAILURE);
+    }
+
     unsigned int nodeCounter = 0;
-    while (fgets(buffer, sizeof(buffer), file) != NULL) {
+    while (getline(&buffer, &bufferSize, file) != -1) {
         nodeCounter++;
     }
     io->nodeCount = nodeCounter;
@@ -45,10 +47,9 @@ IO *IO_create(char *inputFileName, char *outputFileName) {
 
     Node **nodes = node_create_array(nodeCounter);
 
-    fgets(buffer, sizeof(buffer), file); // To get past first line
+    getline(&buffer, &bufferSize, file);
 
-    // Saving the remaining data
-    while (fgets(buffer, sizeof(buffer), file) != NULL){
+    while (getline(&buffer, &bufferSize, file) != -1) {
         
         unsigned int nodeNum;
         char* token = strtok(buffer, ", ");
@@ -56,31 +57,26 @@ IO *IO_create(char *inputFileName, char *outputFileName) {
 
         float *distances = malloc(nodeCounter * sizeof(float));
 
-        // So you can't reach a node from itself
         distances[nodeNum] = 0;
 
         for (int i = 0; i < nodeCounter; i++) {
-            if (i == nodeNum) continue; // Already considered above
+            if (i == nodeNum) continue;
 
-            char* token = strtok(NULL, ", ");
-            if (sscanf(token, "%f", &distances[i]) == 0) {
-                distances[i] = 0;
+            token = strtok(NULL, ", ");
+            if (token != NULL && sscanf(token, "%f", &distances[i]) == 1) {
+                continue;
             }
+            distances[i] = 0;
         }
 
         Node *newNode = node_create(nodeNum, distances);
         node_add_to_array(newNode, nodes, nodeNum);
-
-        // printf("Node %d:", nodeNum);
-        // for (int i = 0; i < nodeCounter; i++) {
-        //     printf(" %.0f", distances[i]);
-        // }
-        // printf("\n");
     }
 
     node_set_min_dist(nodes[io->startNode], 0);
     io->nodes = nodes;
     fclose(file);
+    free(buffer);
 
     return io;
 }

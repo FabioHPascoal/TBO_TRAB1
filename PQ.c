@@ -15,7 +15,7 @@ void swap(void **arr, int i1, int i2) {
     arr[i2] = aux;
 }
 
-void bubble_down(PQ *pq, int idx) {
+void fix_down(PQ *pq, int idx) {
     int smallest = idx;
     int left = 2 * idx + 1;
     int right = 2 * idx + 2;
@@ -29,17 +29,17 @@ void bubble_down(PQ *pq, int idx) {
 
     if (smallest != idx){
         swap(pq->heap, idx, smallest);
-        bubble_down(pq, smallest);
+        fix_down(pq, smallest);
     }
 }
 
-void bubble_up(PQ *pq, int idx) {
+void fix_up(PQ *pq, int idx) {
     if (idx != 0) {
         int parent_idx = (idx - 1)/2;
 
         if (pq->cmp_fn(pq->heap[idx], pq->heap[parent_idx]) < 0){
             swap(pq->heap, idx, parent_idx);
-            bubble_up(pq, parent_idx);
+            fix_up(pq, parent_idx);
         }
     }
 }
@@ -78,7 +78,7 @@ void PQ_insert(PQ *pq, void *data) {
     }
 
     pq->heap[pq->size] = data;
-    bubble_up(pq, pq->size);
+    fix_up(pq, pq->size);
     pq->size++;
 }
 
@@ -90,7 +90,7 @@ void *PQ_delmin(PQ *pq) {
     void *removed = pq->heap[0];
     pq->heap[0] = pq->heap[pq->size - 1];
     pq->size--;
-    bubble_down(pq, 0);
+    fix_down(pq, 0);
 
     return removed;
 }
