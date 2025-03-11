@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "IO.h"
+#include "rbt.h"
 #include "item.h"
+#include "node.h"
 
 extern void sort(Item *a, int lo, int hi);
 
@@ -81,18 +83,34 @@ IO *IO_create(char *inputFileName, char *outputFileName) {
     return io;
 }
 
-void IO_destroy(IO *io) {
-    for (int i = 0; i < io->nodeCount; i++) {
-        node_destroy(io->nodes[i]);
-    }
-
-    node_destoy_array(io->nodes);
-    free(io);
-}
-
 void IO_Dijkstra(IO *io) {
     PQ *unvisitedNodes = PQ_create(io->nodeCount * io->nodeCount, nodeCmp);
     PQ_insert(unvisitedNodes, io->nodes[io->startNode]);
+
+    while (!PQ_is_empty(unvisitedNodes)) {
+        Node *selectedNode = PQ_delmin(unvisitedNodes);
+
+        for (int i = 0; i < io->nodeCount; i++) {
+            Node *neighbor = io->nodes[i];
+            float distBetweenNodes = node_get_distance(selectedNode, neighbor);
+
+            if (distBetweenNodes == 0) continue; // No path from first to second node
+
+            float newDist = node_get_min_dist(selectedNode) + distBetweenNodes;
+
+            if (newDist < node_get_min_dist(neighbor)) { // New best path found
+                node_set_previous(neighbor, selectedNode);
+                node_set_min_dist(neighbor, newDist);
+                PQ_insert(unvisitedNodes, neighbor);
+            }
+        }
+    }
+
+    PQ_destroy(unvisitedNodes);
+}
+
+void IO_Dijkstra_RBT(IO *io) {
+    RBT *unvisitedNodes = rbt_create(io->nodes[io->startNode],BLACK);
 
     while (!PQ_is_empty(unvisitedNodes)) {
         Node *selectedNode = PQ_delmin(unvisitedNodes);
@@ -143,4 +161,13 @@ void IO_build_output_file(IO *io) {
     }
 
     fclose(outputFile);
+}
+
+void IO_destroy(IO *io) {
+    for (int i = 0; i < io->nodeCount; i++) {
+        node_destroy(io->nodes[i]);
+    }
+
+    node_destoy_array(io->nodes);
+    free(io);
 }

@@ -30,10 +30,15 @@ void IO_Dijkstra(IO *io);
 /*
  * asdasd.
  */
+void IO_Dijkstra_RBT(IO *io);
+
+/*
+ * Ordena os nós de IO usando um quick sort aprimorado
+ */
 void IO_sort_nodes(IO *io);
 
 /*
- * asdasd.
+ * Cria o arquivo de saída
  */
 void IO_build_output_file(IO *io);
 
