@@ -8,9 +8,6 @@ typedef int (*CmpFn)(void *, void *);
 typedef struct Node Node;
 typedef struct BST BST;
 
-Node *node_construct(void *data, Node *left, Node *right);
-void node_destruct(Node *node);
-
 BST *bst_construct(CmpFn cmp_fn);
 void bst_destroy(BST *bst);
 
