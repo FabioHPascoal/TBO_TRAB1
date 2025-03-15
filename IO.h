@@ -3,6 +3,8 @@
 
 #include "PQ.h"
 #include "node.h"
+#include "item.h"
+#include "bt.h"
 
 typedef struct IO IO;
 
@@ -30,7 +32,7 @@ void IO_Dijkstra(IO *io);
 /*
  * asdasd.
  */
-void IO_Dijkstra_RBT(IO *io);
+void IO_BT_Dijkstra(IO *io);
 
 /*
  * Ordena os nós de IO usando um quick sort aprimorado

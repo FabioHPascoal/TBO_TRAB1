@@ -2,9 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "IO.h"
-#include "rbt.h"
-#include "item.h"
-#include "node.h"
 
 extern void sort(Item *a, int lo, int hi);
 
@@ -109,11 +106,13 @@ void IO_Dijkstra(IO *io) {
     PQ_destroy(unvisitedNodes);
 }
 
-void IO_Dijkstra_RBT(IO *io) {
-    RBT *unvisitedNodes = rbt_create(io->nodes[io->startNode],BLACK);
+void IO_BT_Dijkstra(IO *io) {
+    BinaryTree *unvisitedNodes = bt_create(nodeCmp);
+    bt_insert(unvisitedNodes, io->nodes[io->startNode]);
 
-    while (!PQ_is_empty(unvisitedNodes)) {
-        Node *selectedNode = PQ_delmin(unvisitedNodes);
+    while (!bt_is_empty(unvisitedNodes)) {
+        Node *selectedNode = bt_min(unvisitedNodes);
+        bt_remove(unvisitedNodes, selectedNode);
 
         for (int i = 0; i < io->nodeCount; i++) {
             Node *neighbor = io->nodes[i];
@@ -126,12 +125,12 @@ void IO_Dijkstra_RBT(IO *io) {
             if (newDist < node_get_min_dist(neighbor)) { // New best path found
                 node_set_previous(neighbor, selectedNode);
                 node_set_min_dist(neighbor, newDist);
-                PQ_insert(unvisitedNodes, neighbor);
+                bt_insert(unvisitedNodes, neighbor);
             }
         }
     }
 
-    PQ_destroy(unvisitedNodes);
+    bt_destroy(unvisitedNodes);
 }
 
 void IO_sort_nodes(IO *io) {
