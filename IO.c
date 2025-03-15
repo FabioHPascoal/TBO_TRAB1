@@ -16,6 +16,8 @@ struct IO {
 IO *IO_create(char *inputFileName, char *outputFileName) {
 
     IO *io = malloc(sizeof(IO));
+    if (!io) return NULL;
+
     io->inputFileName = inputFileName;
     io->outputFileName = outputFileName;
 
@@ -104,33 +106,6 @@ void IO_Dijkstra(IO *io) {
     }
 
     PQ_destroy(unvisitedNodes);
-}
-
-void IO_BT_Dijkstra(IO *io) {
-    BinaryTree *unvisitedNodes = bt_create(nodeCmp);
-    bt_insert(unvisitedNodes, io->nodes[io->startNode]);
-
-    while (!bt_is_empty(unvisitedNodes)) {
-        Node *selectedNode = bt_min(unvisitedNodes);
-        bt_remove_min(unvisitedNodes);
-
-        for (int i = 0; i < io->nodeCount; i++) {
-            Node *neighbor = io->nodes[i];
-            float distBetweenNodes = node_get_distance(selectedNode, neighbor);
-
-            if (distBetweenNodes == 0) continue; // No caminho entre os nós
-
-            float newDist = node_get_min_dist(selectedNode) + distBetweenNodes;
-
-            if (newDist < node_get_min_dist(neighbor)) { // Melhor caminho encontrado
-                node_set_previous(neighbor, selectedNode);
-                node_set_min_dist(neighbor, newDist);
-                bt_insert(unvisitedNodes, neighbor);
-            }
-        }
-    }
-
-    bt_destroy(unvisitedNodes);
 }
 
 void IO_sort_nodes(IO *io) {

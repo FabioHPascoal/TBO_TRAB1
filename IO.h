@@ -4,7 +4,7 @@
 #include "PQ.h"
 #include "node.h"
 #include "item.h"
-#include "bt.h"
+#include "bst.h"
 
 typedef struct IO IO;
 

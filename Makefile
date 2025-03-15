@@ -1,7 +1,6 @@
-binary_heap:
-	gcc -Wall -g -o mainHeap main.c PQ.c bt.c node.c IO.c quick_sort_4.c
-
-binary_tree:
-	gcc -Wall -g -o mainBt main_bt.c PQ.c bt.c node.c IO.c quick_sort_4.c
+bst:
+	gcc -Wall -g -o main.out main.c IO.c node.c quick_sort_4.c PQ_BST.c bst.c
+heap:
+	gcc -Wall -g -o main.out main.c IO.c node.c quick_sort_4.c PQ_HEAP.c
 clean:
 	rm -f main
