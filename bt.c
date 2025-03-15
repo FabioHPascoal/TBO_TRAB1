@@ -19,21 +19,16 @@ BTNode *btnode_create(Node *key){
     return n;
 }
 
-void btnode_insert(BTNode *n, Node *key, int (*cmp_fn)(void *, void *)){
-    int cmp = cmp_fn(key,n->key);
-    //printf("SE %d FOR == 1, KEY > N->KEY, C.C KEY < N->KEY\n", cmp);
-    if(!cmp){
-        if(!n->left)
-            n->left = btnode_create(key);
-        else
-            btnode_insert(n->left,key, cmp_fn);  
-    }
-    else {
-        if(!n->right)
-            n->right = btnode_create(key);
-        else
-            btnode_insert(n->right,key, cmp_fn);  
-    }
+BTNode *btnode_insert(BTNode *root, Node *key, int (*cmp_fn)(void *, void *)) {
+    if (!root) return btnode_create(key);
+
+    int cmp = cmp_fn(key, root->key);
+    if (cmp < 0)
+        root->left = btnode_insert(root->left, key, cmp_fn);
+    else
+        root->right = btnode_insert(root->right, key, cmp_fn);
+    
+    return root;
 }
 
 BTNode *btnode_min(BTNode *root) {
@@ -44,27 +39,25 @@ BTNode *btnode_min(BTNode *root) {
     return curr;
 }
 
-BTNode *btbtnode_remove_min(BTNode *root) {
+BTNode *btnode_remove_min(BTNode *root) {
     if (!root) return NULL;
     if (!root->left) {
         BTNode *right_subtree = root->right;
         free(root);
         return right_subtree;
     }
-    root->left = btbtnode_remove_min(root->left);
+    root->left = btnode_remove_min(root->left);
     return root;
 }
 
 BTNode *btnode_remove(BTNode *root, Node *key, int (*cmp_fn)(void *, void *)) {
-    if (!root) 
-        return NULL;
-    int cmp = cmp_fn(key,root->key);
-    if (cmp < 0){
+    if (!root) return NULL;
+    
+    int cmp = cmp_fn(key, root->key);
+    if (cmp < 0)
         root->left = btnode_remove(root->left, key, cmp_fn);
-    } 
-    else if (cmp > 0) {
+    else if (cmp > 0)
         root->right = btnode_remove(root->right, key, cmp_fn);
-    } 
     else {
         if (!root->left) {
             BTNode *right_subtree = root->right;
@@ -180,13 +173,8 @@ int bt_height(BinaryTree *bt){
     return btnode_height(bt->root) - 1; 
 }
 
-void bt_insert(BinaryTree *bt, Node *key){
-    if(!bt->root){
-        bt->root = btnode_create(key);
-    }
-    else{
-        btnode_insert(bt->root,key, bt->cmp_fn);
-    }
+void bt_insert(BinaryTree *bt, Node *key) {
+    bt->root = btnode_insert(bt->root, key, bt->cmp_fn);
     bt->size++;
 }
 
@@ -227,10 +215,8 @@ void bt_iter_insert(BinaryTree *bt, Node *key){
     bt->size++;
 }
 */
-int bt_is_empty(BinaryTree *bt){
-    if(!bt->size)
-        return 1;
-    return 0;
+int bt_is_empty(BinaryTree *bt) {
+    return bt->size == 0;
 }
 
 
@@ -240,7 +226,7 @@ void bt_remove(BinaryTree *bt, Node *key){
 }
 
 void bt_remove_min(BinaryTree *bt){
-    bt->root = btbtnode_remove_min(bt->root);
+    bt->root = btnode_remove_min(bt->root);
     bt->size--;
 }
 
@@ -271,9 +257,10 @@ QueueNode *queue_btnode_create(BTNode *bst_node){
 }
 
 void queue_node_free(QueueNode *n, int size){
+    QueueNode *next = n->next;
     while(size != 0){
-        QueueNode *next = n->next;
         free(n);
+        next = next->next;
         size--;
     }
     return;

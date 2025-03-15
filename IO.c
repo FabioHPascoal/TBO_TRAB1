@@ -112,17 +112,17 @@ void IO_BT_Dijkstra(IO *io) {
 
     while (!bt_is_empty(unvisitedNodes)) {
         Node *selectedNode = bt_min(unvisitedNodes);
-        bt_remove(unvisitedNodes, selectedNode);
+        bt_remove_min(unvisitedNodes);
 
         for (int i = 0; i < io->nodeCount; i++) {
             Node *neighbor = io->nodes[i];
             float distBetweenNodes = node_get_distance(selectedNode, neighbor);
 
-            if (distBetweenNodes == 0) continue; // No path from first to second node
+            if (distBetweenNodes == 0) continue; // No caminho entre os nós
 
             float newDist = node_get_min_dist(selectedNode) + distBetweenNodes;
 
-            if (newDist < node_get_min_dist(neighbor)) { // New best path found
+            if (newDist < node_get_min_dist(neighbor)) { // Melhor caminho encontrado
                 node_set_previous(neighbor, selectedNode);
                 node_set_min_dist(neighbor, newDist);
                 bt_insert(unvisitedNodes, neighbor);
