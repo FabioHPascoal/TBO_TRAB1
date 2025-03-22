@@ -1,3 +1,7 @@
+// Fábio Pascoal - 2024102901
+// Gessica Silva - 2022102174
+// Nathan Garcia - 2022102179
+
 #include <stdlib.h>
 #include "item.h"
 
