@@ -95,7 +95,6 @@ void *PQ_delmin(PQ *pq) {
     return removed;
 }
 
-
 bool PQ_is_empty(PQ *pq) {
     if (pq->size == 0) return true;
     return false;

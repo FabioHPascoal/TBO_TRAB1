@@ -13,6 +13,7 @@ struct IO {
     char *outputFileName;
 };
 
+// Returns a structure to store all the necessary input/output data
 IO *IO_create(char *inputFileName, char *outputFileName) {
 
     IO *io = malloc(sizeof(IO));
@@ -38,6 +39,7 @@ IO *IO_create(char *inputFileName, char *outputFileName) {
         exit(EXIT_FAILURE);
     }
 
+    // Counts how many nodes are present in the input file
     unsigned int nodeCounter = 0;
     while (getline(&buffer, &bufferSize, file) != -1) {
         nodeCounter++;
@@ -50,6 +52,7 @@ IO *IO_create(char *inputFileName, char *outputFileName) {
 
     getline(&buffer, &bufferSize, file);
 
+    // Process all the lines in the file, and stores them as nodes
     while (getline(&buffer, &bufferSize, file) != -1) {
         
         unsigned int nodeNum;
@@ -83,21 +86,26 @@ IO *IO_create(char *inputFileName, char *outputFileName) {
 }
 
 void IO_Dijkstra(IO *io) {
+    
+    // Priority queue is a better structure than 
     PQ *unvisitedNodes = PQ_create(io->nodeCount * io->nodeCount, nodeCmp);
     PQ_insert(unvisitedNodes, io->nodes[io->startNode]);
 
+    // Calculates the minimum distance from an unvisited node to every other node
     while (!PQ_is_empty(unvisitedNodes)) {
         Node *selectedNode = PQ_delmin(unvisitedNodes);
 
         for (int i = 0; i < io->nodeCount; i++) {
             Node *neighbor = io->nodes[i];
             float distBetweenNodes = node_get_distance(selectedNode, neighbor);
-
-            if (distBetweenNodes == 0) continue; // No path from first to second node
+            
+            // No path from first to second node
+            if (distBetweenNodes == 0) continue;
 
             float newDist = node_get_min_dist(selectedNode) + distBetweenNodes;
 
-            if (newDist < node_get_min_dist(neighbor)) { // New best path found
+            // New best path found
+            if (newDist < node_get_min_dist(neighbor)) {
                 node_set_previous(neighbor, selectedNode);
                 node_set_min_dist(neighbor, newDist);
                 PQ_insert(unvisitedNodes, neighbor);
