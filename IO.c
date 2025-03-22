@@ -87,7 +87,6 @@ IO *IO_create(char *inputFileName, char *outputFileName) {
 
 void IO_Dijkstra(IO *io) {
     
-    // Priority queue is a better structure than 
     PQ *unvisitedNodes = PQ_create(io->nodeCount * io->nodeCount, nodeCmp);
     PQ_insert(unvisitedNodes, io->nodes[io->startNode]);
 
